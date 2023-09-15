@@ -27,6 +27,7 @@ import dto.PersonByFirestation;
 @SpringBootTest
 class SafetyNetServiceTest {
 
+	/* pom.xml clic droit run maven test */
 	@Autowired
 	SafetyNetService safetyNetService;
 	
@@ -54,7 +55,9 @@ class SafetyNetServiceTest {
 	void testGetAddressesByStationNumber(){
 		
 		PersonByFirestation persons = safetyNetService.getPersonsByStationNumber("1");
-		Assert.notNull(persons, "No adresses found");
+
+		assertTrue(persons.getMajorsCount() == 5);
+		assertTrue(persons.getMinorsCount() == 1);
 		
 	}
 

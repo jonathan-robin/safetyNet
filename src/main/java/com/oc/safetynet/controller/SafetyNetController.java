@@ -11,16 +11,18 @@ import dto.PersonByFirestation;
 
 @RestController
 public class SafetyNetController {
-	
+
 	@Autowired
 	SafetyNetService snSvc;
 
-  @GetMapping("/firestation")
-  PersonByFirestation getPersonsByFirestation(@RequestParam String stationNumber){
-	  
-	  PersonByFirestation dto = snSvc.getPersonsByStationNumber(stationNumber);
-	  
-	  return dto;
-  }
-		
+	@GetMapping("/firestation")
+	PersonByFirestation getPersonsByFirestation(@RequestParam String stationNumber) {
+
+		PersonByFirestation dto = snSvc.getPersonsByStationNumber(stationNumber);
+
+		return dto;
+	}
+	
+	
+
 }
