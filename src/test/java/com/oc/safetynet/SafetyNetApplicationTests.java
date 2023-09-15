@@ -1,4 +1,4 @@
-package com.safetyNet;
+package com.oc.safetynet;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

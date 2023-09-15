@@ -41,6 +41,6 @@ public class MedicalRecord {
 		this.allergies = allergies;
 	} 
 	
-	
+
 
 }

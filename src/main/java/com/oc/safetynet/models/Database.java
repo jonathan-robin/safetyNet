@@ -21,8 +21,8 @@ public class Database {
 	public void setFirestations(List<Firestation> firestations) {
 		this.firestations = firestations;
 	}
-	public List<MedicalRecord> getMedicalrecords() {
-		return medicalrecords;
+	public Stream<MedicalRecord> getMedicalrecords() {
+		return medicalrecords.stream();
 	}
 	public void setMedicalrecords(List<MedicalRecord> medicalrecords) {
 		this.medicalrecords = medicalrecords;

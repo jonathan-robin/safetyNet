@@ -125,5 +125,6 @@ public class PersonsController {
 	  databaseService.getDatabase().setPersons(personsTmp);
 	  return new ResponseEntity<String>("User: " + lastName + " " + firstName + " deleted", HttpStatus.ACCEPTED);
   }	
+  
 
 }

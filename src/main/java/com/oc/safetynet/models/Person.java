@@ -1,5 +1,7 @@
 package com.oc.safetynet.models;
 
+import java.util.Optional;
+
 public class Person {
 	
 	private String email;
@@ -9,6 +11,7 @@ public class Person {
 	private String city; 
 	private Integer zip;
 	private String phone;
+	private MedicalRecord medicalRecord;
 	
 	public String getEmail() {
 		return email;
@@ -59,4 +62,13 @@ public class Person {
 	public String getFullName() {
 		return this.firstName + " " + this.lastName;
 	}
+	
+	public Optional<MedicalRecord> getMedicalRecord() {
+		return Optional.ofNullable(medicalRecord);
+	}
+	
+	public void setMedicalRecord(MedicalRecord medicalRecord) {
+		this.medicalRecord = medicalRecord;
+	} 
+	
 }	
