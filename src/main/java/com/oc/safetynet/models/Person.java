@@ -11,7 +11,7 @@ public class Person {
 	private String city; 
 	private Integer zip;
 	private String phone;
-	private MedicalRecord medicalRecord;
+	//private MedicalRecord medicalRecord;
 	
 	public String getEmail() {
 		return email;
@@ -63,12 +63,13 @@ public class Person {
 		return this.firstName + " " + this.lastName;
 	}
 	
-	public Optional<MedicalRecord> getMedicalRecord() {
-		return Optional.ofNullable(medicalRecord);
-	}
+	//public Optional<MedicalRecord> getMedicalRecord() {
+		
+		//return Optional.ofNullable(this.medicalRecord);
+	//}
 	
-	public void setMedicalRecord(MedicalRecord medicalRecord) {
-		this.medicalRecord = medicalRecord;
-	} 
+	////public void setMedicalRecord(MedicalRecord medicalRecord) {
+		//this.medicalRecord = medicalRecord;
+	//} 
 	
 }	

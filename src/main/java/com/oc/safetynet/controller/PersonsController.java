@@ -18,9 +18,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.oc.safetynet.models.Database;
+import com.oc.safetynet.models.MedicalRecord;
 import com.oc.safetynet.models.Person;
 import com.oc.safetynet.service.DatabaseService;
+import com.oc.safetynet.service.SafetyNetService;
 
+import dto.DtoPersonWithMedication;
 import jakarta.annotation.PostConstruct;
 
 @RestController
@@ -30,11 +33,9 @@ public class PersonsController {
 	@Autowired
 	private DatabaseService databaseService;
 	
-	@PostConstruct
-	private void postConstruct() {
-		System.out.println("todo");
-	}
-	
+	@Autowired
+	private SafetyNetService snSvc;
+
   @GetMapping("/persons")
   Stream<Person> all() {
 		  return databaseService.getDatabase().getPersons();
@@ -126,5 +127,25 @@ public class PersonsController {
 	  return new ResponseEntity<String>("User: " + lastName + " " + firstName + " deleted", HttpStatus.ACCEPTED);
   }	
   
+  @GetMapping("/personInfo")
+  ResponseEntity<List<DtoPersonWithMedication>> getPersonInfo(@RequestParam String lastName, @RequestParam(required=false) String firstName ){
+	  
+	  List<Person> persons = snSvc.getPersons(lastName, firstName);
+	  
+	  List<DtoPersonWithMedication> dto = new ArrayList<>();
+	  
+	  persons.forEach(person -> {
+		  MedicalRecord mr = snSvc.getMedicalRecord(person.getLastName(), person.getFirstName());
+		  
+		  DtoPersonWithMedication dtoTmp = new DtoPersonWithMedication();
+		  dtoTmp.setPerson(person); 
+		  dtoTmp.setMedicalRecord(mr);
+		  
+		  dto.add(dtoTmp);
+		  
+	  });
 
+	  return new ResponseEntity<List<DtoPersonWithMedication>>(dto, HttpStatus.OK);
+	  
+  }
 }
