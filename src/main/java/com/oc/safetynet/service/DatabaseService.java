@@ -34,8 +34,6 @@ public class DatabaseService {
             Person firstPerson = database.getPersons().findFirst().orElseThrow();
             System.out.println(firstPerson.getFullName());
 
-            // Faire quelque chose avec l'objet obtenu
-            //System.out.println(persons);
         } catch (Exception e) {
             e.printStackTrace();
         }

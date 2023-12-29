@@ -37,7 +37,7 @@ public class PersonsController {
 	private SafetyNetService snSvc;
 
   @GetMapping("/persons")
-  Stream<Person> all() {
+  Stream<Person> all() {  
 		  return databaseService.getDatabase().getPersons();
   }
   
@@ -61,7 +61,8 @@ public class PersonsController {
 	  
 	  Person user = findPerson(newPerson.getLastName(), newPerson.getFirstName(), personsTmp);
 	  
-	  if (user != null) return new ResponseEntity<String>("User already exists.", HttpStatus.BAD_REQUEST);
+	  if (user != null) 
+		  return new ResponseEntity<String>("User already exists.", HttpStatus.BAD_REQUEST);
 
 	  person.add(newPerson); 
 	  person.addAll(personsTmp); 
@@ -99,9 +100,9 @@ public class PersonsController {
 		  
 		  databaseService.getDatabase().setPersons(persons);
 		  
-		  return new ResponseEntity<String>("User " + person.getFullName() + " updated", HttpStatus.ACCEPTED);
+		  return new ResponseEntity<String>("User " + person.getFullName() + " updated", HttpStatus.OK);
 		} else {
-			return new ResponseEntity<String>("Can't find user to update with name: " + firstName + " " + lastName, HttpStatus.ACCEPTED);
+			return new ResponseEntity<String>("Can't find user to update with name: " + firstName + " " + lastName, HttpStatus.BAD_REQUEST);
 		}	
   }
   
@@ -124,7 +125,7 @@ public class PersonsController {
 	  });
 	  
 	  databaseService.getDatabase().setPersons(personsTmp);
-	  return new ResponseEntity<String>("User: " + lastName + " " + firstName + " deleted", HttpStatus.ACCEPTED);
+	  return new ResponseEntity<String>("User: " + lastName + " " + firstName + " deleted", HttpStatus.OK);
   }	
   
   @GetMapping("/personInfo")
@@ -148,4 +149,5 @@ public class PersonsController {
 	  return new ResponseEntity<List<DtoPersonWithMedication>>(dto, HttpStatus.OK);
 	  
   }
+  
 }

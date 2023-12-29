@@ -48,6 +48,10 @@ class SafetyNetServiceTest {
 		System.out.print(person.get(0).getFullName());
 		assertTrue(person.get(0).getFullName().equals("Jacob Boyd"));
 		
+		List<Person> personNull = safetyNetService.getPersons(null, null);
+		assertTrue(personNull.size() == 0);
+		
+		
 		//fail("Not yet implemented");
 	}
 
@@ -103,14 +107,21 @@ class SafetyNetServiceTest {
 		}
 	}
 
-	
+	@Test
 	void testGetHomeByAddress() {
 		ChildsByAddress homes = safetyNetService.getHomeByAddress("1509 Culver St");
 		 
 		assertTrue(homes.getAdults().size() == 3); 
 		assertTrue(homes.getChilds().size() == 2);
 	}
-
+	
+	@Test
+	void testGetAddressByStationNumber() { 
+		List<String> addresses = safetyNetService.getAddressesByStationNumber("3"); 
+		
+		assertTrue(addresses.size() > 0);
+		
+	}
 
 
 	
