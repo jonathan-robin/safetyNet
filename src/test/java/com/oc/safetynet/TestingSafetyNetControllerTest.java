@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +92,19 @@ public class TestingSafetyNetControllerTest {
 			.andExpect(status().isOk());
 		
 	}
+	
+	@Test
+	void testGetEmailsByCity() throws Exception {
+		
+		this.mockMvc.perform(get("/communityEmail")
+				.contentType(MediaType.APPLICATION_JSON)
+		        .param("city", "Culver"))
+			.andExpect(status().isOk());
+		
+	}
+	
+	
+	
 		
 		
 }
