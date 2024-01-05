@@ -60,7 +60,7 @@ public class MedicalsRecordController {
 		  mr.addAll(mrTmp); 
 		  
 		  databaseService.getDatabase().setMedicalrecords(mr);
-		  return new ResponseEntity<String>("MedicalRecord added : " + newMr.getFirstName() + newMr.getLastName(), HttpStatus.ACCEPTED);
+		  return new ResponseEntity<String>("MedicalRecord added : " + newMr.getFirstName() + newMr.getLastName(), HttpStatus.OK);
 	  }
 	  
 	  
@@ -91,9 +91,9 @@ public class MedicalsRecordController {
 			  
 			  databaseService.getDatabase().setMedicalrecords(medicalRecords);
 			  
-			  return new ResponseEntity<String>("MedicalRecord for: " + medicalRecord.getFirstName() + " " + medicalRecord.getLastName() + " updated", HttpStatus.ACCEPTED);
+			  return new ResponseEntity<String>("MedicalRecord for: " + medicalRecord.getFirstName() + " " + medicalRecord.getLastName() + " updated", HttpStatus.OK);
 			} else {
-				return new ResponseEntity<String>("Can't find medicalRecord to update with name: " + lastName + " " + firstName , HttpStatus.ACCEPTED);
+				return new ResponseEntity<String>("Can't find medicalRecord to update with name: " + lastName + " " + firstName , HttpStatus.OK);
 			}	
 	  }
 	  
@@ -116,7 +116,7 @@ public class MedicalsRecordController {
 		  });
 		  
 		  databaseService.getDatabase().setMedicalrecords(medicalRecordTmp);
-		  return new ResponseEntity<String>("medicalRecord for " + lastName + " " + firstName + " deleted", HttpStatus.ACCEPTED);
+		  return new ResponseEntity<String>("medicalRecord for " + lastName + " " + firstName + " deleted", HttpStatus.OK);
 	  }	
 	  
 }

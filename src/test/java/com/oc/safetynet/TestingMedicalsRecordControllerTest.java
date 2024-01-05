@@ -72,7 +72,63 @@ public class TestingMedicalsRecordControllerTest {
 
 	}
 	
+	@Test 
+	void testUpdateMedicalRecord() throws Exception { 
+		
+		/* find person with name and firstname and update email*/
+		MedicalRecord mr = new MedicalRecord();
+		mr.setAllergies(new ArrayList<>());
+		mr.setBirthdate("03/06/2017");
+		mr.setFirstName("Zach");
+		mr.setLastName("Zemicks");
+		mr.setMedications(new ArrayList<>());
 
+		
+		/* find person  and udpate*/
+		this.mockMvc.perform(MockMvcRequestBuilders
+	         .put("/medicalRecord")
+			.contentType(MediaType.APPLICATION_JSON)
+			.param("allergies", mr.getAllergies().toString())
+	        .param("birthdate", mr.getBirthdate())
+	        .param("firstName", mr.getFirstName())
+	        .param("lastName", mr.getLastName())
+	        .param("medications", mr.getMedications().toString()))
+		.andExpect(status().isOk());
+
+		
+	}
+	
+	@Test
+	void testDeleteMedicalRecord() throws Exception { 
+		
+		/* find person with name and firstname and update email*/
+		MedicalRecord mr = new MedicalRecord();
+		mr.setBirthdate("01/08/1980");
+		mr.setFirstName("Foster");
+		mr.setLastName("Shepard");
+
+		
+		/* delete new person */
+		 this.mockMvc.perform(MockMvcRequestBuilders
+		            .delete("/medicalRecord")
+		            .contentType(MediaType.APPLICATION_JSON)
+			        .param("birthdate", mr.getBirthdate())
+			        .param("firstName", mr.getFirstName())
+			        .param("lastName", mr.getLastName()))
+		 	.andExpect(status().isOk());
+		 
+		 /* delete can't find */
+		 this.mockMvc.perform(MockMvcRequestBuilders
+		            .delete("/medicalRecord")
+		            .contentType(MediaType.APPLICATION_JSON)
+			        .param("birthdate", "test")
+			        .param("firstName", "test")
+			        .param("lastName", "test"));
+		
+	}
+
+	
+	
 	
 	
 }
