@@ -54,7 +54,7 @@ public class FirestationsController {
 
 		databaseService.getDatabase().setFirestations(fs);
 		return new ResponseEntity<String>("Firestation added : " + newFs.getAddress() + " : n°" + newFs.getStation(),
-				HttpStatus.ACCEPTED);
+				HttpStatus.OK);
 	}
 
 	private Firestation findFirestation(String address, String station, List<Firestation> firestations) {
@@ -63,6 +63,8 @@ public class FirestationsController {
 				.filter(p -> p.getAddress().equals(address) && p.getStation().equals(station)).findFirst().orElse(null);
 		return firestation;
 	}
+	
+	
 
 	@PutMapping("")
 	ResponseEntity<String> updateFirestation(@RequestParam String address, @RequestParam String station) {
@@ -83,10 +85,10 @@ public class FirestationsController {
 
 			return new ResponseEntity<String>(
 					"Firestation " + firestation.getAddress() + ", n°" + firestation.getStation() + " updated",
-					HttpStatus.ACCEPTED);
+					HttpStatus.OK);
 		} else {
 			return new ResponseEntity<String>("Can't find user to update with address: " + address,
-					HttpStatus.ACCEPTED);
+					HttpStatus.OK);
 		}
 	}
 
@@ -111,7 +113,7 @@ public class FirestationsController {
 
 		databaseService.getDatabase().setFirestations(firestationsTmp);
 		return new ResponseEntity<String>("firestation n°" + station + ", address: " + address + " deleted",
-				HttpStatus.ACCEPTED);
+				HttpStatus.OK);
 	}
 
 }

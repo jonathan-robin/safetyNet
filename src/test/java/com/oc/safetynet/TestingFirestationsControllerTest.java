@@ -19,8 +19,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -66,5 +68,47 @@ public class TestingFirestationsControllerTest {
 
 		
 	}
+	
+	@Test 
+	void testUpdatePerson() throws Exception { 
+		
+		/* find person with name and firstname and update email*/
+		Firestation firestation = new Firestation();
+		firestation.setAddress("1509 Culver St");
+		firestation.setStation("3");
+		
+		/* find person  and udpate*/
+		this.mockMvc.perform(MockMvcRequestBuilders
+	         .put("/firestation")
+			.contentType(MediaType.APPLICATION_JSON)
+	        .param("address", firestation.getAddress())
+	        .param("station", firestation.getStation()))
+		.andExpect(status().isOk());
+		
+	}
+	
+	
+	@Test
+	void testDeleteFirestation() throws Exception { 
+		
+		/* Delete one specific person */
+		
+		/* the person we want to delete */
+		Firestation firestation = new Firestation();
+		firestation.setAddress("644 Gershwin Cir");
+		firestation.setStation("1");
+		
+		/* delete new person */
+		 this.mockMvc.perform(MockMvcRequestBuilders
+		            .delete("/firestation")
+		            .contentType(MediaType.APPLICATION_JSON)
+			        .param("address", firestation.getAddress())
+			        .param("station", firestation.getStation()))
+		 	.andExpect(status().isOk());
+		
+	}
+	
+	
+
 
 }
