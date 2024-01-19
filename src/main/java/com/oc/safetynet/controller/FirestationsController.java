@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,18 +28,25 @@ import dto.PersonByFirestation;
 @RestController
 @RequestMapping("firestation")
 public class FirestationsController {
+	
+	Logger logger = LoggerFactory.getLogger(MedicalsRecordController.class);
 
 	@Autowired
 	private DatabaseService databaseService;
 
 	@GetMapping("/firestations")
 	Stream<Firestation> all() {
-		return databaseService.getDatabase().getFirestations();
+		logger.info("/firestation/firestations [GET] FirestationsController.all() called!");
+		Stream<Firestation> fs = databaseService.getDatabase().getFirestations();
+		logger.info("Firestations List: {}", fs);
+		return fs;
 	}
 
 	@PostMapping("")
 	ResponseEntity<String> addFirestation(@RequestParam String address, @RequestParam String station) {
 
+		logger.info("/firestation [POST] firestation.addFirestation() called!");
+		
 		Firestation newFs = new Firestation(address, station);
 
 		List<Firestation> fsTmp = databaseService.getDatabase().getFirestations().toList();
@@ -53,6 +62,7 @@ public class FirestationsController {
 		fs.addAll(fsTmp);
 
 		databaseService.getDatabase().setFirestations(fs);
+		logger.info("new Firestations inserted: {}", fs.toString());
 		return new ResponseEntity<String>("Firestation added : " + newFs.getAddress() + " : n°" + newFs.getStation(),
 				HttpStatus.OK);
 	}
@@ -69,6 +79,8 @@ public class FirestationsController {
 	@PutMapping("")
 	ResponseEntity<String> updateFirestation(@RequestParam String address, @RequestParam String station) {
 
+		logger.info("/firestations [PUT] FirestationsController.updateFirestation() called!");
+		
 		Stream<Firestation> firestationTmp = databaseService.getDatabase().getFirestations();
 		Firestation firestation = firestationTmp.filter(fs -> fs.getAddress().equals(address)).findFirst().orElse(null);
 
@@ -83,10 +95,12 @@ public class FirestationsController {
 
 			databaseService.getDatabase().setFirestations(firestations);
 
+			logger.info("Firestations: {}"+firestation.toString() + " updated!");
 			return new ResponseEntity<String>(
 					"Firestation " + firestation.getAddress() + ", n°" + firestation.getStation() + " updated",
 					HttpStatus.OK);
 		} else {
+			logger.error("Can't find firestation to update: " + address);
 			return new ResponseEntity<String>("Can't find user to update with address: " + address,
 					HttpStatus.OK);
 		}
@@ -95,14 +109,18 @@ public class FirestationsController {
 	@DeleteMapping("")
 	ResponseEntity<String> deleteFirestation(@RequestParam String address, @RequestParam String station) {
 
+		logger.info("/firestation [DELETE] FirestationsController.deleteFirestation() called!");
+		
 		List<Firestation> firestations = databaseService.getDatabase().getFirestations().toList();
 		List<Firestation> firestationsTmp = new ArrayList<>();
 
 		Firestation firestationToDelete = findFirestation(address, station, firestations);
 
-		if (firestationToDelete == null)
+		if (firestationToDelete == null) {
+			logger.error("Can't find firestation to update: " + address + ", n°" + station);						
 			return new ResponseEntity<String>("Can't find firestation to delete: " + address + ", n°" + station,
 					HttpStatus.NOT_FOUND);
+		}
 
 		firestations.forEach(p -> {
 			if (p.getAddress().equals(address) && p.getStation().equals(station))
@@ -112,6 +130,7 @@ public class FirestationsController {
 		});
 
 		databaseService.getDatabase().setFirestations(firestationsTmp);
+		logger.info("firestation n°" + station + ", address: " + address + " deleted!");
 		return new ResponseEntity<String>("firestation n°" + station + ", address: " + address + " deleted",
 				HttpStatus.OK);
 	}
