@@ -32,7 +32,10 @@ public class MedicalsRecordController {
 	
 	  @GetMapping("/firestations")
 	  Stream<MedicalRecord> all() {
-			  return databaseService.getDatabase().getMedicalrecords();
+		  logger.info("/medicalRecord/firestations [GET] MedicalRecordController.all() called!");
+		  Stream <MedicalRecord> mr = databaseService.getDatabase().getMedicalrecords();
+		  logger.info("medicalRecords List: {}", mr);
+		  return mr;
 	  }
 	
 	  
@@ -40,9 +43,7 @@ public class MedicalsRecordController {
 	  ResponseEntity<String> addMedicalRecord(@RequestParam String firstName, @RequestParam String lastName, @RequestParam String birthdate,
 			  @RequestParam List<String> medications, @RequestParam List<String> allergies) {
 		  
-		  /* check if user exists other well need to add it in persons */
-		  
-		  
+		  logger.info("/medicalRecord [POST] MedicalRecordController.addMedicalRecord() called!");
 		  MedicalRecord newMr = new MedicalRecord();
 		  
 		  	  
@@ -50,8 +51,7 @@ public class MedicalsRecordController {
 		  List<MedicalRecord> mr = new ArrayList<>();
 		  
 		  MedicalRecord medicalRecord = findMedicalRecord(firstName, lastName, birthdate, mrTmp);
-		  
-		  if (medicalRecord != null) 
+		  		  if (medicalRecord != null) 
 			  return new ResponseEntity<String>("MedicalRecord already exists.", HttpStatus.BAD_REQUEST);
 		  
 		  newMr.setFirstName(firstName);
@@ -64,6 +64,7 @@ public class MedicalsRecordController {
 		  mr.addAll(mrTmp); 
 		  
 		  databaseService.getDatabase().setMedicalrecords(mr);
+		  logger.info("new MedicalRecord inserted: {}", newMr.toString());
 		  return new ResponseEntity<String>("MedicalRecord added : " + newMr.getFirstName() + newMr.getLastName(), HttpStatus.OK);
 	  }
 	  
@@ -75,6 +76,8 @@ public class MedicalsRecordController {
 	  @PutMapping("")
 	  ResponseEntity<String> updateMedicalRecord(@RequestParam String firstName, @RequestParam String lastName, @RequestParam String birthdate,
 			  @RequestParam List<String> medications, @RequestParam List<String> allergies) {
+		  
+		  logger.info("/medicalRecord [PUT] MedicalRecordController.updateMedicalRecord() called!");
 		  
 		  Stream<MedicalRecord> medicalRecordTmp = databaseService.getDatabase().getMedicalrecords();
 		  MedicalRecord medicalRecord = medicalRecordTmp.filter(mr -> mr.getLastName().equals(lastName) && mr.getFirstName().equals(firstName)).findFirst().orElse(null);
@@ -93,10 +96,12 @@ public class MedicalsRecordController {
 			  medicalRecords.add(medicalRecord); 
 			  medicalRecords.addAll(_medicalRecords); 
 			  
+			  logger.info("MedicalRecord: {}"+medicalRecord.toString() + " updated!");
 			  databaseService.getDatabase().setMedicalrecords(medicalRecords);
 			  
 			  return new ResponseEntity<String>("MedicalRecord for: " + medicalRecord.getFirstName() + " " + medicalRecord.getLastName() + " updated", HttpStatus.OK);
 			} else {
+				logger.error("Can't find medicalRecord to update: " + firstName + " " +lastName);
 				return new ResponseEntity<String>("Can't find medicalRecord to update with name: " + lastName + " " + firstName , HttpStatus.OK);
 			}	
 	  }
@@ -104,13 +109,16 @@ public class MedicalsRecordController {
 	  @DeleteMapping("")
 	  ResponseEntity<String> deleteMedicalRecord(@RequestParam String firstName, @RequestParam String lastName, @RequestParam String birthdate) {
 		  
+		  logger.info("/person [DELETE] MedicalRecordController.deleteMedicalRecord() called!");
 		  List<MedicalRecord> medicalRecords = databaseService.getDatabase().getMedicalrecords().toList();	  
 		  List<MedicalRecord> medicalRecordTmp = new ArrayList<>();
 		  
 		  MedicalRecord medicalRecordToDelete = findMedicalRecord(firstName, lastName, birthdate, medicalRecords);
 		  
-		  if (medicalRecordToDelete == null)
+		  if (medicalRecordToDelete == null) {
+			  logger.error("Can't find medicalRecord to update: " + firstName + " " +lastName);			  
 			  return new ResponseEntity<String>("Can't find medicalRecord to delete for user "+ lastName + " " + firstName, HttpStatus.NOT_FOUND);
+		  }
 		  
 		  medicalRecords.forEach(p -> {
 			  if (p.getFirstName().equals(firstName) && p.getLastName().equals(lastName) && p.getBirthdate().equals(birthdate))
@@ -120,6 +128,7 @@ public class MedicalsRecordController {
 		  });
 		  
 		  databaseService.getDatabase().setMedicalrecords(medicalRecordTmp);
+		  logger.info("MedicalRecord for : " + lastName + " " + firstName + " deleted!");
 		  return new ResponseEntity<String>("medicalRecord for " + lastName + " " + firstName + " deleted", HttpStatus.OK);
 	  }	
 	  
