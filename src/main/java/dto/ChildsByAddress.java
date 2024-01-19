@@ -22,6 +22,12 @@ public class ChildsByAddress {
 	public void setAdults(List<HomeByAddress> parents) {
 		this.adults = parents;
 	}
+	
+	@Override
+	public String toString() {
+		return "ChildsByAddress [childs=" + childs + ", adults=" + adults + "]";
+	}
+
 
 	
 }

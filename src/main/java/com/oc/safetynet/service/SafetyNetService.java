@@ -133,8 +133,7 @@ public class SafetyNetService {
 		    calNow.setTime(now);
 
 		    int diff = calNow.get(YEAR) - calBd.get(YEAR);
-		    
-		    System.out.println(diff);
+
 		    return diff;
 		    
 		} catch (ParseException e) {

@@ -44,15 +44,12 @@ class SafetyNetServiceTest {
 	void testGetPerson() {
 		
 		List<Person> person = safetyNetService.getPersons("Boyd", "Jacob");
-		
-		System.out.print(person.get(0).getFullName());
+
 		assertTrue(person.get(0).getFullName().equals("Jacob Boyd"));
 		
 		List<Person> personNull = safetyNetService.getPersons(null, null);
 		assertTrue(personNull.size() == 0);
-		
-		
-		//fail("Not yet implemented");
+
 	}
 
 	/**
@@ -64,10 +61,7 @@ class SafetyNetServiceTest {
 		MedicalRecord mr = safetyNetService.getMedicalRecord("Boyd", "Jacob");
 		
 		assertTrue(mr.getBirthdate().equals("03/06/1989"));
-		
 
-		
-		//fail("Not yet implemented");
 	}
 
 	/**

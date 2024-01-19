@@ -47,9 +47,14 @@ public class PersonByAddress {
 		}
 		public void setAllergies(List<String> allergies) {
 			this.allergies = allergies;
+		}
+		
+		@Override
+		public String toString() {
+			return "PersonByAddress [stationNumber=" + stationNumber + ", age=" + age + ", name=" + name
+					+ ", phoneNumber=" + phoneNumber + ", medications=" + medications + ", allergies=" + allergies
+					+ "]";
 		} 
 		
-
-	
 
 }

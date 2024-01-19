@@ -22,17 +22,13 @@ public class DatabaseService {
         try {
             // Charger le fichier JSON
             File file = new File("src/main/resources/data.json");
-            
-            System.out.println(file.getAbsolutePath());
 
             // Lire le fichier JSON et le mapper vers une classe ou une structure de données appropriée
             
             this.database = objectMapper.readValue(file, Database.class);
-            
-            System.out.println(database.getPersons().findFirst());
-            
+  
             Person firstPerson = database.getPersons().findFirst().orElseThrow();
-            System.out.println(firstPerson.getFullName());
+
 
         } catch (Exception e) {
             e.printStackTrace();

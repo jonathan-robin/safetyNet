@@ -25,7 +25,9 @@ public class HomeByAddress {
 		this.age = age;
 	}
 	
-	
-	
+	@Override
+	public String toString() {
+		return "HomeByAddress [name=" + name + ", firstName=" + firstName + ", age=" + age + "]";
+	}
 	
 }

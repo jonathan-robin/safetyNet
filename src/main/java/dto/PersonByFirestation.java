@@ -22,12 +22,21 @@ public class PersonByFirestation {
 		return minorsCount;
 	}
 	
+	@Override
+	public String toString() {
+		return "PersonByFirestation [persons=" + persons 
+				+ ", majorsCount=" + majorsCount 
+				+ ", minorsCount=" + minorsCount + "]";
+	}
+
 	public void setPersons(List<Person> persons) {
 		this.persons = persons;
 	}
+	
 	public void setMajorsCount(Integer majorsCount) {
 		this.majorsCount = majorsCount; 
 	}
+	
 	public void setMinorsCount(Integer minorsCount) {
 		this.minorsCount = minorsCount;
 	}

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,12 +26,15 @@ import com.oc.safetynet.service.DatabaseService;
 import com.oc.safetynet.service.SafetyNetService;
 
 import dto.DtoPersonWithMedication;
+import dto.PersonByFirestation;
 import jakarta.annotation.PostConstruct;
 
 @RestController
 @RequestMapping("person")
 public class PersonsController {
 
+	Logger logger = LoggerFactory.getLogger(PersonsController.class);
+	
 	@Autowired
 	private DatabaseService databaseService;
 	
@@ -38,7 +43,10 @@ public class PersonsController {
 
   @GetMapping("/persons")
   Stream<Person> all() {  
-		  return databaseService.getDatabase().getPersons();
+	  logger.info("/firestation called!");
+	  Stream<Person> persons = databaseService.getDatabase().getPersons();
+	  logger.info("persons List: {}", persons);
+	  return persons;
   }
   
   @PostMapping("")

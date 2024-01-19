@@ -54,10 +54,12 @@ public class Person {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	} 
+
+	@Override
 	public String toString() {
-		return "name: "+this.getLastName() + "; firstname: " + this.getFirstName();
+		return "Person [email=" + email + ", lastName=" + lastName + ", firstName=" + firstName + ", address=" + address
+				+ ", city=" + city + ", zip=" + zip + ", phone=" + phone + "]";
 	}
-	
 	public String getFullName() {
 		return this.firstName + " " + this.lastName;
 	}
