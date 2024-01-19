@@ -69,8 +69,15 @@ public class FirestationsController {
 
 	private Firestation findFirestation(String address, String station, List<Firestation> firestations) {
 
+		logger.debug("function FirestationController.findFirestation() called with parameter: {}"
+				+ "address: {}" + address 
+				+ "station: {}" + station 
+				+ "firestations: {}" + firestations ); 
+		
 		Firestation firestation = firestations.stream()
 				.filter(p -> p.getAddress().equals(address) && p.getStation().equals(station)).findFirst().orElse(null);
+		
+		logger.debug("Function result firestation: {}"+ firestation);
 		return firestation;
 	}
 	
