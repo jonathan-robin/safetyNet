@@ -2,7 +2,6 @@ package com.oc.safetynet.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -19,24 +18,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.oc.safetynet.models.Firestation;
-import com.oc.safetynet.models.Person;
 import com.oc.safetynet.service.DatabaseService;
-import com.oc.safetynet.service.SafetyNetService;
-
-import dto.PersonByFirestation;
+import com.oc.safetynet.service.FirestationsService;
 
 @RestController
 @RequestMapping("firestation")
 public class FirestationsController {
 	
-	Logger logger = LoggerFactory.getLogger(MedicalsRecordController.class);
+	Logger logger = LoggerFactory.getLogger(FirestationsController.class);
 
 	@Autowired
 	private DatabaseService databaseService;
+	
+	@Autowired
+	public FirestationsService fsSvc;
 
-	@GetMapping("/firestations")
+	@GetMapping("/all")
 	Stream<Firestation> all() {
-		logger.info("/firestation/firestations [GET] FirestationsController.all() called!");
+		logger.info("/firestation/all [GET] FirestationsController.all() called!");
 		Stream<Firestation> fs = databaseService.getDatabase().getFirestations();
 		logger.info("Firestations List: {}", fs);
 		return fs;
@@ -50,10 +49,9 @@ public class FirestationsController {
 		Firestation newFs = new Firestation(address, station);
 
 		List<Firestation> fsTmp = databaseService.getDatabase().getFirestations().toList();
-
 		List<Firestation> fs = new ArrayList<>();
 
-		Firestation firestation = findFirestation(address, station, fsTmp);
+		Firestation firestation = fsSvc.findFirestation(address, station, fsTmp);
 
 		if (firestation != null)
 			return new ResponseEntity<String>("Firestation already exists.", HttpStatus.BAD_REQUEST);
@@ -67,22 +65,7 @@ public class FirestationsController {
 				HttpStatus.OK);
 	}
 
-	private Firestation findFirestation(String address, String station, List<Firestation> firestations) {
-
-		logger.debug("function FirestationController.findFirestation() called with parameter: {}"
-				+ "address: {}" + address 
-				+ "station: {}" + station 
-				+ "firestations: {}" + firestations ); 
-		
-		Firestation firestation = firestations.stream()
-				.filter(p -> p.getAddress().equals(address) && p.getStation().equals(station)).findFirst().orElse(null);
-		
-		logger.debug("Function result firestation: {}"+ firestation);
-		return firestation;
-	}
 	
-	
-
 	@PutMapping("")
 	ResponseEntity<String> updateFirestation(@RequestParam String address, @RequestParam String station) {
 
@@ -121,7 +104,7 @@ public class FirestationsController {
 		List<Firestation> firestations = databaseService.getDatabase().getFirestations().toList();
 		List<Firestation> firestationsTmp = new ArrayList<>();
 
-		Firestation firestationToDelete = findFirestation(address, station, firestations);
+		Firestation firestationToDelete = fsSvc.findFirestation(address, station, firestations);
 
 		if (firestationToDelete == null) {
 			logger.error("Can't find firestation to update: " + address + ", n°" + station);						

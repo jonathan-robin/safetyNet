@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -22,10 +23,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oc.safetynet.dto.DtoPersonWithMedication;
 import com.oc.safetynet.models.MedicalRecord;
 import com.oc.safetynet.models.Person;
-
-import dto.DtoPersonWithMedication;
+import com.oc.safetynet.service.DatabaseService;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -33,13 +34,21 @@ class TestingPersonControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
+	
+	Person person = null;
+	
+	@Autowired 
+	private DatabaseService dbSvc;
 
-	/* https://stackoverflow.com/questions/65520264/how-to-test-json-structure-in-spring-boot/65520877#65520877 */
+    @BeforeEach
+    public void init() {
+    	this.person = dbSvc.getDatabase().getPersons().toList().get(0);
+    }
 	
 	@Test
 	void testGetAllPerson() throws Exception {
 		
-		this.mockMvc.perform(get("/person/persons"))
+		this.mockMvc.perform(get("/person/all"))
 			.andExpect(status().isOk());		
 	}
 	
@@ -68,7 +77,7 @@ class TestingPersonControllerTest {
 	        .param("phone", person.getPhone()));
 		
 		/* check if we have one more row in json */
-		this.mockMvc.perform(get("/person/persons"))
+		this.mockMvc.perform(get("/person/all"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.[0].lastName", is("test")));
 	
@@ -76,51 +85,20 @@ class TestingPersonControllerTest {
 	
 	@Test
 	void testGetPersonInfo() throws Exception { 
-		
-		/* the person we want the info */
-		String lastName = "Boyd"; 
-		String firstName = "John";
-		
-		
+
 		/* insert new person */
 		this.mockMvc.perform(get("/person/personInfo")
 			.contentType(MediaType.APPLICATION_JSON)
-	        .param("firstName", firstName)
-	        .param("lastName", lastName))
+	        .param("firstName", person.getFirstName())
+	        .param("lastName", person.getLastName()))
 		.andExpect(status().isOk());
 	}
 	
-	@Test
-	void testDeletePerson() throws Exception { 
-		
-		/* Delete one specific person */
-		
-		/* the person we want to delete */
-		String lastName = "Boyd"; 
-		String firstName = "John";
-		
-		/* delete new person */
-		 this.mockMvc.perform(MockMvcRequestBuilders
-		            .delete("/person")
-		            .contentType(MediaType.APPLICATION_JSON)
-			        .param("firstName", firstName)
-			        .param("lastName", lastName))
-		 	.andExpect(status().isOk());
-		
-	}
 
 	@Test 
 	void testUpdatePerson() throws Exception { 
 		
-		/* find person with name and firstname and update email*/
-		Person person = new Person();
-		person.setFirstName("Kendrik");
-		person.setLastName("Stelzer");
-		person.setEmail("test");
-		person.setAddress("test");
-		person.setCity("test");
-		person.setZip(1);
-		person.setPhone("000");
+		person.setEmail("testingUpdateEmail");
 		
 		/* find person  and udpate*/
 		this.mockMvc.perform(MockMvcRequestBuilders
@@ -134,6 +112,19 @@ class TestingPersonControllerTest {
 	        .param("zip", person.getZip().toString())
 	        .param("phone", person.getPhone()))
 		.andExpect(status().isOk());
+		
+	}
+	
+	@Test
+	void testDeletePerson() throws Exception { 
+		
+		/* delete new person */
+		 this.mockMvc.perform(MockMvcRequestBuilders
+		            .delete("/person")
+		            .contentType(MediaType.APPLICATION_JSON)
+			        .param("firstName", person.getFirstName())
+			        .param("lastName", person.getLastName()))
+		 	.andExpect(status().isOk());
 		
 	}
 	

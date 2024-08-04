@@ -1,4 +1,4 @@
-package dto;
+package com.oc.safetynet.dto;
 
 public class HomeByAddress {
 	

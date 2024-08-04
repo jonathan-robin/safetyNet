@@ -19,20 +19,19 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.oc.safetynet.dto.ChildsByAddress;
+import com.oc.safetynet.dto.HomeByAddress;
+import com.oc.safetynet.dto.PersonByAddress;
+import com.oc.safetynet.dto.PersonByFirestation;
 import com.oc.safetynet.models.Firestation;
 import com.oc.safetynet.models.MedicalRecord;
 import com.oc.safetynet.models.Person;
-
-import dto.HomeByAddress;
-import dto.ChildsByAddress;
-import dto.PersonByAddress;
-import dto.PersonByFirestation;
 
 @Service
 public class SafetyNetService {
 
 	@Autowired
-	DatabaseService dbService; 
+	public DatabaseService dbService; 
 	
 	
 	
@@ -114,7 +113,6 @@ public class SafetyNetService {
 		dto.setMinorsCount(minorsCount);
 		return dto;		
 	}
-	
 	
 	public Integer getAgeByBirthdate(String birthdate) {
 

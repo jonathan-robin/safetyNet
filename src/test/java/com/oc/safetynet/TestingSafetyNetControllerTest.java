@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,10 +24,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oc.safetynet.dto.DtoPersonWithMedication;
+import com.oc.safetynet.models.Firestation;
 import com.oc.safetynet.models.MedicalRecord;
 import com.oc.safetynet.models.Person;
-
-import dto.DtoPersonWithMedication;
+import com.oc.safetynet.service.DatabaseService;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -34,13 +36,25 @@ public class TestingSafetyNetControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
+
+	private Person person; 
+	private Firestation fs;
+	
+	@Autowired
+	private DatabaseService dbSvc; 
+	
+	@BeforeEach
+	public void init() { 
+		this.person = dbSvc.getDatabase().getPersons().toList().get(0);
+		this.fs = dbSvc.getDatabase().getFirestations().toList().get(0);
+	}
 	
 	@Test
 	void testGetPersonsByFirestation() throws Exception { 
 			
 		this.mockMvc.perform(get("/firestation")
 				.contentType(MediaType.APPLICATION_JSON)
-		        .param("stationNumber", "1"))
+		        .param("stationNumber", fs.getStation()))
 			.andExpect(status().isOk());
 	}
 	
@@ -50,7 +64,7 @@ public class TestingSafetyNetControllerTest {
 		
 		this.mockMvc.perform(get("/childAlert")
 				.contentType(MediaType.APPLICATION_JSON)
-		        .param("address", "1509 Culver St"))
+		        .param("address", fs.getAddress()))
 			.andExpect(status().isOk());
 		
 		/* test no child at this address */
@@ -66,7 +80,7 @@ public class TestingSafetyNetControllerTest {
 		
 		this.mockMvc.perform(get("/phoneAlert")
 				.contentType(MediaType.APPLICATION_JSON)
-		        .param("firestation", "1"))
+		        .param("firestation", fs.getStation()))
 			.andExpect(status().isOk());
 		
 	}
@@ -75,7 +89,7 @@ public class TestingSafetyNetControllerTest {
 	void testGetPersonByAddress() throws Exception { 
 		this.mockMvc.perform(get("/fire")
 				.contentType(MediaType.APPLICATION_JSON)
-		        .param("address", "1509 Culver St"))
+		        .param("address", fs.getAddress()))
 			.andExpect(status().isOk());
 	}
 	
@@ -98,7 +112,7 @@ public class TestingSafetyNetControllerTest {
 		
 		this.mockMvc.perform(get("/communityEmail")
 				.contentType(MediaType.APPLICATION_JSON)
-		        .param("city", "Culver"))
+		        .param("city", person.getCity()))
 			.andExpect(status().isOk());
 		
 	}

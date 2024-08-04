@@ -19,14 +19,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.oc.safetynet.dto.DtoPersonWithMedication;
+import com.oc.safetynet.dto.PersonByFirestation;
 import com.oc.safetynet.models.Database;
 import com.oc.safetynet.models.MedicalRecord;
 import com.oc.safetynet.models.Person;
 import com.oc.safetynet.service.DatabaseService;
+import com.oc.safetynet.service.PersonsService;
 import com.oc.safetynet.service.SafetyNetService;
 
-import dto.DtoPersonWithMedication;
-import dto.PersonByFirestation;
 import jakarta.annotation.PostConstruct;
 
 @RestController
@@ -40,10 +41,13 @@ public class PersonsController {
 	
 	@Autowired
 	private SafetyNetService snSvc;
+	
+	@Autowired
+	private PersonsService personSvc;
 
-  @GetMapping("/persons")
+  @GetMapping("/all")
   Stream<Person> all() {  
-	  logger.info("/person/persons [GET] PersonsController.all() called!");
+	  logger.info("/person/all [GET] PersonsController.all() called!");
 	  Stream<Person> persons = databaseService.getDatabase().getPersons();
 	  logger.info("persons List: {}", persons);
 	  return persons;
@@ -69,7 +73,7 @@ public class PersonsController {
 	  
 	  List<Person> person = new ArrayList<>();
 	  
-	  Person user = findPerson(newPerson.getLastName(), newPerson.getFirstName(), personsTmp);
+	  Person user = personSvc.findPerson(newPerson.getLastName(), newPerson.getFirstName(), personsTmp);
 	  
 	  if (user != null) 
 		  return new ResponseEntity<String>("User already exists.", HttpStatus.BAD_REQUEST);
@@ -82,12 +86,6 @@ public class PersonsController {
 	  return new ResponseEntity<String>("User added : " + newPerson.getFullName(), HttpStatus.ACCEPTED);
   }
 
-	private Person findPerson(String lastName, String firstName, List<Person> personsList) {
-		
-		Person user = personsList.stream().filter(p -> p.getFirstName().equals(firstName) && p.getLastName().equals(lastName))
-	      .findFirst().orElse(null);
-		return user;
-	}
   
   @PutMapping("")
   ResponseEntity<String> updatePerson(@RequestParam String email, @RequestParam String lastName, @RequestParam String firstName,
@@ -96,14 +94,12 @@ public class PersonsController {
 	  logger.info("/person [PUT] PersonsController.updatePerson() called!");
 	  
 	  Stream<Person> personsTmp = databaseService.getDatabase().getPersons();
-	  Person person = findPerson(lastName, firstName, personsTmp.toList());
+	  Person person = personSvc.findPerson(lastName, firstName, personsTmp.toList());
 	  
 	  if(person != null) {
-		  person.setAddress(address); 
-		  person.setCity(city); 
-		  person.setPhone(phone); 
-		  person.setZip(zip);
-		  person.setEmail(email);
+		  
+		  personSvc.updatePerson(person, address, city, phone, zip, email);
+
 		  
 		  List<Person> persons = new ArrayList<>();
 		  List<Person> _personsTmp = databaseService.getDatabase().getPersons().toList();
@@ -130,7 +126,7 @@ public class PersonsController {
 	  List<Person> persons = databaseService.getDatabase().getPersons().toList();	  
 	  List<Person> personsTmp = new ArrayList<>();
 	  
-	  Person personToDelete = findPerson(lastName, firstName, persons);
+	  Person personToDelete = personSvc.findPerson(lastName, firstName, persons);
 	  
 	  if (personToDelete == null) {
 		  logger.error("Can't find user to update: " + firstName + " " +lastName);
@@ -155,6 +151,7 @@ public class PersonsController {
 	  logger.info("/person/personInfo [GET] PersonsController.getPersonInfo() called!");
 	  
 	  List<Person> persons = snSvc.getPersons(lastName, firstName);
+	  logger.info("{}", persons.toString());
 	  
 	  List<DtoPersonWithMedication> dto = new ArrayList<>();
 	  

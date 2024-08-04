@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.oc.safetynet.models.Firestation;
 import com.oc.safetynet.models.MedicalRecord;
 import com.oc.safetynet.service.DatabaseService;
+import com.oc.safetynet.service.MedicalsRecordService;
 
 @RestController
 @RequestMapping("medicalRecord")
@@ -30,9 +30,12 @@ public class MedicalsRecordController {
 	@Autowired
 	private DatabaseService databaseService;
 	
-	  @GetMapping("/firestations")
+	@Autowired
+	private MedicalsRecordService mrSvc;
+	
+	  @GetMapping("/all")
 	  Stream<MedicalRecord> all() {
-		  logger.info("/medicalRecord/firestations [GET] MedicalRecordController.all() called!");
+		  logger.info("/medicalRecord/all [GET] MedicalRecordController.all() called!");
 		  Stream <MedicalRecord> mr = databaseService.getDatabase().getMedicalrecords();
 		  logger.info("medicalRecords List: {}", mr);
 		  return mr;
@@ -44,21 +47,16 @@ public class MedicalsRecordController {
 			  @RequestParam List<String> medications, @RequestParam List<String> allergies) {
 		  
 		  logger.info("/medicalRecord [POST] MedicalRecordController.addMedicalRecord() called!");
-		  MedicalRecord newMr = new MedicalRecord();
+		  MedicalRecord newMr = new MedicalRecord(firstName, lastName, allergies, birthdate, medications);
 		  
 		  	  
 		  List<MedicalRecord> mrTmp = databaseService.getDatabase().getMedicalrecords().toList();
 		  List<MedicalRecord> mr = new ArrayList<>();
 		  
-		  MedicalRecord medicalRecord = findMedicalRecord(firstName, lastName, birthdate, mrTmp);
-		  		  if (medicalRecord != null) 
-			  return new ResponseEntity<String>("MedicalRecord already exists.", HttpStatus.BAD_REQUEST);
+		  MedicalRecord medicalRecord = mrSvc.findMedicalRecord(firstName, lastName, birthdate);
 		  
-		  newMr.setFirstName(firstName);
-		  newMr.setLastName(lastName);
-		  newMr.setAllergies(allergies);
-		  newMr.setBirthdate(birthdate);
-		  newMr.setMedications(medications);
+		  if (medicalRecord != null) 
+			  return new ResponseEntity<String>("MedicalRecord already exists.", HttpStatus.BAD_REQUEST);
 		  
 		  mr.add(newMr); 
 		  mr.addAll(mrTmp); 
@@ -67,12 +65,7 @@ public class MedicalsRecordController {
 		  logger.info("new MedicalRecord inserted: {}", newMr.toString());
 		  return new ResponseEntity<String>("MedicalRecord added : " + newMr.getFirstName() + newMr.getLastName(), HttpStatus.OK);
 	  }
-	  
-	  
-	  public MedicalRecord findMedicalRecord(String firstName, String lastName, String birthdate, List<MedicalRecord> medicalRecords) {
-		  return medicalRecords.stream().filter(mr -> mr.getFirstName().equals(firstName) && mr.getLastName().equals(lastName) && mr.getBirthdate().equals(birthdate)).findFirst().orElse(null);
-	  }
-	  
+	    
 	  @PutMapping("")
 	  ResponseEntity<String> updateMedicalRecord(@RequestParam String firstName, @RequestParam String lastName, @RequestParam String birthdate,
 			  @RequestParam List<String> medications, @RequestParam List<String> allergies) {
@@ -83,12 +76,8 @@ public class MedicalsRecordController {
 		  MedicalRecord medicalRecord = medicalRecordTmp.filter(mr -> mr.getLastName().equals(lastName) && mr.getFirstName().equals(firstName)).findFirst().orElse(null);
 		  
 		  if(medicalRecord != null) {
-			  
-			  medicalRecord.setFirstName(firstName);
-			  medicalRecord.setLastName(lastName);
-			  medicalRecord.setAllergies(allergies);
-			  medicalRecord.setBirthdate(birthdate);
-			  medicalRecord.setMedications(medications);
+
+			  mrSvc.updateMr(medicalRecord, firstName, lastName, allergies, birthdate, medications);
 			  
 			  List<MedicalRecord> medicalRecords = new ArrayList<>();
 			  List<MedicalRecord> _medicalRecords = databaseService.getDatabase().getMedicalrecords().toList();
@@ -113,7 +102,7 @@ public class MedicalsRecordController {
 		  List<MedicalRecord> medicalRecords = databaseService.getDatabase().getMedicalrecords().toList();	  
 		  List<MedicalRecord> medicalRecordTmp = new ArrayList<>();
 		  
-		  MedicalRecord medicalRecordToDelete = findMedicalRecord(firstName, lastName, birthdate, medicalRecords);
+		  MedicalRecord medicalRecordToDelete = mrSvc.findMedicalRecord(firstName, lastName, birthdate);
 		  
 		  if (medicalRecordToDelete == null) {
 			  logger.error("Can't find medicalRecord to update: " + firstName + " " +lastName);			  

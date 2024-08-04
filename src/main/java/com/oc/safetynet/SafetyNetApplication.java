@@ -31,7 +31,7 @@ public class SafetyNetApplication {
 	}
 	
 	@PostConstruct
-	public void init() { 
+	public void init() throws Exception { 
 		databaseService.loadDatabase();
 	}
 

@@ -1,7 +1,5 @@
 package com.oc.safetynet.models;
 
-import java.util.Optional;
-
 public class Person {
 	
 	private String email;
@@ -63,6 +61,5 @@ public class Person {
 	public String getFullName() {
 		return this.firstName + " " + this.lastName;
 	}
-	
 	
 }	

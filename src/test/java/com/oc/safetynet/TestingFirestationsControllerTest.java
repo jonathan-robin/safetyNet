@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -26,11 +27,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oc.safetynet.dto.DtoPersonWithMedication;
 import com.oc.safetynet.models.Firestation;
 import com.oc.safetynet.models.MedicalRecord;
 import com.oc.safetynet.models.Person;
-
-import dto.DtoPersonWithMedication;
+import com.oc.safetynet.service.DatabaseService;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -39,10 +40,20 @@ public class TestingFirestationsControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 	
+	@Autowired
+	DatabaseService dbSvc;
+	
+	Firestation fs = null;
+	
+	@BeforeEach
+	void init () {
+		fs = dbSvc.getDatabase().getFirestations().toList().get(0);
+	}
+	
 	@Test
 	void testGetAllFirestations() throws Exception { 
 		
-		this.mockMvc.perform(get("/firestation/firestations"))
+		this.mockMvc.perform(get("/firestation/all"))
 			.andExpect(status().isOk());		
 	}
 	
@@ -62,7 +73,7 @@ public class TestingFirestationsControllerTest {
 	        .param("station", firestation.getStation()));
 		
 		/* check if we have one more row in json */
-		this.mockMvc.perform(get("/firestation/firestations"))
+		this.mockMvc.perform(get("/firestation/all"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.[0].address", is("test")));
 
@@ -72,17 +83,14 @@ public class TestingFirestationsControllerTest {
 	@Test 
 	void testUpdatePerson() throws Exception { 
 		
-		/* find person with name and firstname and update email*/
-		Firestation firestation = new Firestation();
-		firestation.setAddress("1509 Culver St");
-		firestation.setStation("3");
+		fs.setAddress("TestingupdateAddress");
 		
 		/* find person  and udpate*/
 		this.mockMvc.perform(MockMvcRequestBuilders
 	         .put("/firestation")
 			.contentType(MediaType.APPLICATION_JSON)
-	        .param("address", firestation.getAddress())
-	        .param("station", firestation.getStation()))
+	        .param("address", fs.getAddress())
+	        .param("station", fs.getStation()))
 		.andExpect(status().isOk());
 		
 	}
@@ -91,19 +99,12 @@ public class TestingFirestationsControllerTest {
 	@Test
 	void testDeleteFirestation() throws Exception { 
 		
-		/* Delete one specific person */
-		
-		/* the person we want to delete */
-		Firestation firestation = new Firestation();
-		firestation.setAddress("644 Gershwin Cir");
-		firestation.setStation("1");
-		
 		/* delete new person */
 		 this.mockMvc.perform(MockMvcRequestBuilders
 		            .delete("/firestation")
 		            .contentType(MediaType.APPLICATION_JSON)
-			        .param("address", firestation.getAddress())
-			        .param("station", firestation.getStation()))
+			        .param("address", fs.getAddress())
+			        .param("station", fs.getStation()))
 		 	.andExpect(status().isOk());
 		
 	}

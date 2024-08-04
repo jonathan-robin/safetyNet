@@ -15,29 +15,26 @@ public class DatabaseService {
 
 	private Database database;
 	
-	public void loadDatabase() { 
+	public void loadDatabase() throws Exception { 
 		 
 		ObjectMapper objectMapper = new ObjectMapper();
 
         try {
-            // Charger le fichier JSON
             File file = new File("src/main/resources/data.json");
-
-            // Lire le fichier JSON et le mapper vers une classe ou une structure de données appropriée
-            
             this.database = objectMapper.readValue(file, Database.class);
-  
-            Person firstPerson = database.getPersons().findFirst().orElseThrow();
-
 
         } catch (Exception e) {
-            e.printStackTrace();
+        	throw e;
         }
-		
 	}
+	
 	
 	public Database getDatabase() {
 		return this.database;
+	}
+	
+	public Database setDatabase(Database db) { 
+		return this.database = db;
 	}
 	
 }

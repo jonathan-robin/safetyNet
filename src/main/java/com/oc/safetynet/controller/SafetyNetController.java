@@ -16,13 +16,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.oc.safetynet.dto.ChildsByAddress;
+import com.oc.safetynet.dto.PersonByAddress;
+import com.oc.safetynet.dto.PersonByFirestation;
 import com.oc.safetynet.models.Person;
 import com.oc.safetynet.service.DatabaseService;
 import com.oc.safetynet.service.SafetyNetService;
-
-import dto.ChildsByAddress;
-import dto.PersonByAddress;
-import dto.PersonByFirestation;
 
 @RestController
 public class SafetyNetController {
